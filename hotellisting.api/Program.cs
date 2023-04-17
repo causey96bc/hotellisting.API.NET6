@@ -20,8 +20,8 @@ builder.Services.AddCors(options =>
 
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().ReadFrom.Configuration(ctx.Configuration));
 
-var app = builder.Build();
 builder.Services.AddAutoMapper(typeof (MapperConfig)); 
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

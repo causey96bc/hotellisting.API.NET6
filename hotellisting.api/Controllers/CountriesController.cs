@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using hotellisting.api.Data;
+using hotellisting.api.Models;
 using AutoMapper;
 
 namespace hotellisting.api.Controllers
@@ -26,37 +27,44 @@ namespace hotellisting.api.Controllers
 
         // GET: api/Countries
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
+        public async Task<ActionResult<IEnumerable<GetCountryModel>>> GetCountries()
         {
-            return await _context.Countries.ToListAsync();
+            var countries = await _context.Countries.ToListAsync();
+            var records = _mapper.Map<List<GetCountryModel>>(countries);
+            return Ok(records);
         }
 
         // GET: api/Countries/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Country>> GetCountry(int id)
+        public async Task<ActionResult<GetCountryDetailsModel>> GetCountry(int id)
         {
-            var country = await _context.Countries.FindAsync(id);
-
+            var country = await _context.Countries.Include(q => q.Hotels).FirstOrDefaultAsync(q=> q.Id == id);
+            var record  = _mapper.Map<GetCountryDetailsModel>(country);
             if (country == null)
             {
                 return NotFound();
             }
 
-            return country;
+            return Ok(record);
         }
 
         // PUT: api/Countries/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCountry(int id, Country country)
+        public async Task<IActionResult> PutCountry(int id, UpdateCountryModel updateCountry)
         {
-            if (id != country.Id)
+            if (id != updateCountry.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(country).State = EntityState.Modified;
-
+            //_context.Entry(country).State = EntityState.Modified;
+            var country = await _context.Countries.FindAsync(id);
+            if(country == null)
+            {
+                return NotFound();
+            }
+            _mapper.Map(updateCountry, country);
             try
             {
                 await _context.SaveChangesAsync();
