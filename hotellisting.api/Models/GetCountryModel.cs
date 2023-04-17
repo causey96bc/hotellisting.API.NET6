@@ -6,7 +6,7 @@
     }
     public class GetCountryDetailsModel: BaseCountryModel
     {
-        public int Id { get; set; 
+        public int Id { get; set; } 
         public List<GetHotelModel> Hotels { get; set; }
     }
 }

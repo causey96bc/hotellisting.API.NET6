@@ -1,6 +1,7 @@
-﻿namespace hotellisting.api.Repository
-  using hotellisting.api.Contracts
-{
+﻿namespace hotellisting.api.Repository;
+  
+    
+using hotellisting.api.Contracts;
 using hotellisting.api.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -55,4 +56,4 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         await _context.SaveChangesAsync();
     }
 }
-}
+
